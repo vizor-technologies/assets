@@ -1,0 +1,41 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2024-11-07T23:08:58Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/449604431",
+        "building": "industrial",
+        "name": "Convermex"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -100.330139,
+              25.687414
+            ],
+            [
+              -100.268441,
+              25.682841
+            ],
+            [
+              -100.271359,
+              25.614143
+            ],
+            [
+              -100.330139,
+              25.687414
+            ]
+            
+          ]
+        ]
+      },
+      "id": "way/449604431"
+    }
+  ]
+}
