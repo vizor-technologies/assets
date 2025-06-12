@@ -5,28 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Torneo Estadísticas</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: transparent; color: white; }
+  body { font-family: Arial, sans-serif; padding: 20px; background: transparent; color: rgb(218, 25, 25); }
   h2 { margin-bottom: 10px; }
   /* Your original styles for loading text */
   .loading { margin-top: 20px; font-style: italic; color: #ccc; }
 
   /* Updated table styles based on your provided CSS */
-  table.leaderboard-table {
-    width: 200%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 10px;
-  }
-
   #table-container {
-    display: flex;
-    gap: 10px; /* reduce gap to 10px */
-    justify-content: flex-start; /* align tables to the left */
-  }
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#table-container > div {
+  flex: 1; /* let each div grow equally */
+}
+
+table.leaderboard-table {
+  width: 100%; /* take full width of container div */
+  table-layout: fixed; /* optional: helps control column sizing */
+}
+
+   
 
   table.leaderboard-table {
-    width: calc(50% - 5px); /* two tables side by side with 10px gap */
-  }
+  width: 100%;
+}
 
   thead tr {
     background: #fff;
@@ -105,6 +110,10 @@ tbody tr td:nth-child(4){
 
 tbody tr td:nth-child(5){
   text-align: center;
+}
+
+.table-wrapper {
+  width: 80%;
 }
 
 </style>
@@ -197,12 +206,14 @@ tbody tr td:nth-child(5){
         .join("");
 
       return `
+        <div class="table-wrapper">
         <table class="leaderboard-table">
           ${theadHTML}
           <tbody>
             ${rowsHTML}
           </tbody>
         </table>
+        </div>
       `;
     };
 
