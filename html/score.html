@@ -145,6 +145,32 @@ table.leaderboard-table {
   table-layout: auto;
 }
 
+.score-header {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.75);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  max-width: 90%;
+  z-index: 2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.score-row {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* space between the two divs */
+  flex-wrap: wrap; /* allows wrapping on smaller screens */
+  margin-bottom: 20px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 
 </style>
 </head>
@@ -152,8 +178,11 @@ table.leaderboard-table {
 
 
 <div id="score-container">
-    <h2 id="torneoNombre"></h2>
-    <h3 id="categoriaNombre"></h3>
+   
+    <div class="score-row">
+        <div id="torneoNombre" class="score-header"></div>
+        <div id="categoriaNombre" class="score-header"></div>
+      </div>
 
     <div id="table-container">
     <p class="loading">Cargando datos...</p>
