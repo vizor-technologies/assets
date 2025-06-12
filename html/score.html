@@ -112,19 +112,52 @@ tbody tr td:nth-child(5){
   text-align: center;
 }
 
+
+#score-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-direction: column;
+  text-align: center;
+}
+
+#table-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .table-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: center;
   width: 80%;
 }
+
+.table-holder {
+  flex: 1;
+  overflow-x: auto;
+}
+
+table.leaderboard-table {
+  width: 100%;
+  table-layout: auto;
+}
+
 
 </style>
 </head>
 <body>
 
-<h2 id="torneoNombre"></h2>
-<h3 id="categoriaNombre"></h3>
 
-<div id="table-container">
-  <p class="loading">Cargando datos...</p>
+<div id="score-container">
+    <h2 id="torneoNombre"></h2>
+    <h3 id="categoriaNombre"></h3>
+
+    <div id="table-container">
+    <p class="loading">Cargando datos...</p>
+    </div>
 </div>
 
 <script>
@@ -206,14 +239,14 @@ tbody tr td:nth-child(5){
         .join("");
 
       return `
-        <div class="table-wrapper">
+       
         <table class="leaderboard-table">
           ${theadHTML}
           <tbody>
             ${rowsHTML}
           </tbody>
         </table>
-        </div>
+         
       `;
     };
 
@@ -224,8 +257,14 @@ tbody tr td:nth-child(5){
 
     // Render two tables side by side
     tableContainer.innerHTML = `
-      <div>${buildTableHTML(firstHalf)}</div>
-      <div>${buildTableHTML(secondHalf)}</div>
+    <div id="table-container" style="width: 80%; display: flex; justify-content: center;">
+
+     <div class="table-wrapper">
+      <div >${buildTableHTML(firstHalf)}</div>
+      <div >${buildTableHTML(secondHalf)}</div>
+    </div>
+   </div>
+
     `;
   }
 
