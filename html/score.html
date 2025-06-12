@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Torneo Estadísticas</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #222; color: white; }
+  h2 { margin-bottom: 10px; }
+  /* Your original styles for loading text */
+  .loading { margin-top: 20px; font-style: italic; color: #ccc; }
+
+  /* Updated table styles based on your provided CSS */
+  table.leaderboard-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 10px;
+  }
+
+  #table-container {
+    display: flex;
+    gap: 10px; /* reduce gap to 10px */
+    justify-content: flex-start; /* align tables to the left */
+  }
+
+  table.leaderboard-table {
+    width: calc(50% - 5px); /* two tables side by side with 10px gap */
+  }
+
+  thead tr {
+    background: #fff;
+  }
+
+  thead tr th {
+    color: #195699;
+    font-weight: 700;
+    padding: 10px;
+    border: none;
+  }
+
+  tbody tr {
+    color: #606060;
+    font-weight: 700;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: #fff;
+    border: 1px solid #cfcfcf;
+  }
+
+ 
+
+  thead tr th:nth-child(2), tbody tr td:nth-child(2) {
+    width: 40%; /* Jugador column wider */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: #f0f0f0;
+  }
+
+  /* First column header and first cell background gradient and white text */
+  thead tr th.first-header {
+    background: linear-gradient(90deg, #5d9ee5, #2270c7);
+    color: #fff;
+  }
+
+  tbody tr td.first-cell {
+    background: linear-gradient(90deg, #5d9ee5, #2270c7);
+    color: #fff;
+  }
+
+  /* Rounded corners for first and last headers */
+  thead th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  thead th:last-child {
+    border-top-right-radius: 10px;
+  }
+
+  /* Rounded corners for last row cells */
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+  }
+
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+  }
+
+  tbody tr td:nth-child(1){
+  text-align: center;
+}
+
+tbody tr td:nth-child(3){
+  text-align: center;
+}
+
+tbody tr td:nth-child(4){
+  text-align: center;
+}
+
+tbody tr td:nth-child(5){
+  text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<h2 id="torneoNombre"></h2>
+<h3 id="categoriaNombre"></h3>
+
+<div id="table-container">
+  <p class="loading">Cargando datos...</p>
+</div>
+
+<script>
+(() => {
+  // Config & state
+  const token = "670e0e41402dd";
+  const torneosDemo = [455, 469, 470, 471, 472, 466, 467];
+  let currentIndex = 0;
+  let isApiCallProcess = false;
+
+  const torneoNombreElem = document.getElementById("torneoNombre");
+  const categoriaNombreElem = document.getElementById("categoriaNombre");
+  const tableContainer = document.getElementById("table-container");
+
+  async function fetchData(torneoId) {
+    isApiCallProcess = true;
+    try {
+      const res = await fetch(`https://plack.mx/ws/torneo/getEstadisticaTorneoV2?token=${token}&torneo_id=${torneoId}`, {
+        method: "GET",
+      });
+      if (!res.ok) throw new Error("Network response was not ok");
+      const data = await res.json();
+      return data;
+    } catch (err) {
+      console.error("Fetch error:", err);
+      return null;
+    } finally {
+      isApiCallProcess = false;
+    }
+  }
+
+  function renderTable(data) {
+    if (!data || !data.exito) {
+      tableContainer.innerHTML = "<p>No se pudo cargar la información.</p>";
+      torneoNombreElem.textContent = "";
+      categoriaNombreElem.textContent = "";
+      return;
+    }
+
+    torneoNombreElem.textContent = data.torneo || "";
+    categoriaNombreElem.textContent = data.categoria_nombre || "";
+
+    const fechas = data.fechas_torneo || [];
+    const estadisticas = data.estadistica_fechas_torneo || [];
+
+    if (estadisticas.length === 0 || fechas.length === 0) {
+      tableContainer.innerHTML = "<p>No hay datos para mostrar.</p>";
+      return;
+    }
+
+    const headers = ["Lugar", "Jugador", ...fechas.map(f => f.dia)];
+
+    const buildTableHTML = (players) => {
+      const theadHTML = `
+        <thead>
+          <tr>
+            ${headers.map((h, i) => `<th class="${i === 2  ? "first-header" : ""}">${h}</th>`).join("")}
+          </tr>
+        </thead>
+      `;
+
+      const rowsHTML = players
+        .map(player => {
+          const resultadosCells = fechas.map((_, i) => {
+            const hcp = player.resultados && player.resultados[i] ? player.resultados[i].hcp : "-";
+            // Apply "first-cell" class ONLY to first dynamic column (index 0 of fechas)
+            const className = i === 0 ? "first-cell" : "";
+            return `<td class="${className}">${hcp}</td>`;
+          }).join("");
+
+          return `
+            <tr>
+              <td>${player.lugar}</td>
+              <td>${player.nombre}</td>
+              ${resultadosCells}
+            </tr>
+          `;
+        })
+        .join("");
+
+      return `
+        <table class="leaderboard-table">
+          ${theadHTML}
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+        </table>
+      `;
+    };
+
+    // Split players into two halves
+    const half = Math.ceil(estadisticas.length / 2);
+    const firstHalf = estadisticas.slice(0, half);
+    const secondHalf = estadisticas.slice(half);
+
+    // Render two tables side by side
+    tableContainer.innerHTML = `
+      <div>${buildTableHTML(firstHalf)}</div>
+      <div>${buildTableHTML(secondHalf)}</div>
+    `;
+  }
+
+  async function rotateTorneos() {
+    if (torneosDemo.length === 0) {
+      tableContainer.innerHTML = "<p>No hay torneos configurados.</p>";
+      return;
+    }
+
+    while (true) {
+      const currentId = torneosDemo[currentIndex];
+      console.log(`Fetching torneo_id: ${currentId}`);
+      const data = await fetchData(currentId);
+      renderTable(data);
+
+      currentIndex = (currentIndex + 1) % torneosDemo.length;
+      await new Promise(resolve => setTimeout(resolve, 15000));
+    }
+  }
+
+  rotateTorneos();
+
+})();
+</script>
+
+</body>
+</html>
