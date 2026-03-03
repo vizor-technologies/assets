@@ -193,7 +193,8 @@ body {
 (() => {
   // Config & state
   const token = "670e0e41402dd";
-  const torneosDemo = [459,460,461,462,463,464,465];
+  const torneosDemo_ant = [459,460,461,462,463,464,465];
+  const torneosDemo = [501,502,503,504,505,506,507];
   let currentIndex = 0;
   let isApiCallProcess = false;
 
@@ -204,6 +205,8 @@ body {
   async function fetchData(torneoId) {
     isApiCallProcess = true;
     try {
+
+      https://live.plack.mx/matchplayalt/
       const res = await fetch(`https://plack.mx/ws/torneo/getEstadisticaTorneoV2?token=${token}&torneo_id=${torneoId}`, {
         method: "GET",
       });
